@@ -9,6 +9,17 @@ const CONSTANTS = {
     SUCCESS: 'Success',
     FAILED: 'Failed',
   },
+  USER_MESSAGE: {
+    TEXT_REGISTER_PHARMACY: 'register pharmacy',
+    TEXT_REGISTER_CUSTOMER: 'register customer',
+    TEXT_SKIP: 'skip',
+    TEXT_CLEAR: 'clear',
+    TEXT_RESET: 'reset',
+  },
+  NEARBY_PHARMACY_RADIUS: 2, // in km
+  APP_MESSAGE: {
+    INITIAL_MESSAGE: `Welcome to Pharma Delivery! To place an order, please send a picture of your prescription. To register as a pharmacy, send "register pharmacy".`,
+  },
   ROLE: {
     ADMIN: 'admin',
     OWNER: 'owner',

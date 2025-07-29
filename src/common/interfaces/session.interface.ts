@@ -6,7 +6,5 @@ export interface CustomSessionData {
     customerId?: string;
     orderId?: string;
     pharmacyName?: string;
-    // Add any other data you need to track
-    [key: string]: any;
   };
 }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { Customer } from './schemas/customer.schema';
 
 @Injectable()
@@ -46,6 +46,25 @@ export class CustomersService {
     if (!customer) {
       throw new NotFoundException(`Customer with ID ${customerId} not found`);
     }
+    return customer;
+  }
+
+  async updateAddress(
+    customerId: ObjectId,
+    address: string,
+  ): Promise<Customer> {
+    const customer = await this.customerModel.findByIdAndUpdate(
+      customerId,
+      {
+        address,
+      },
+      { new: true },
+    );
+
+    if (!customer) {
+      throw new NotFoundException(`Customer with ID ${customerId} not found`);
+    }
+
     return customer;
   }
 }
