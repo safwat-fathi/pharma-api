@@ -1,4 +1,4 @@
-import * as session from 'express-session'; 
+import * as session from 'express-session';
 import { RedisStore } from 'connect-redis';
 import Redis from 'ioredis';
 import { redisConfig } from './redis.config';

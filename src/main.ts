@@ -7,7 +7,7 @@ import sessionConfig from './config/session.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Remove COOP header to fix Swagger UI issues
   app.use((_, res, next) => {
     res.removeHeader('Cross-Origin-Opener-Policy');

@@ -1,4 +1,4 @@
-import { RedisClientOptions } from "@liaoliaots/nestjs-redis";
+import { RedisClientOptions } from '@liaoliaots/nestjs-redis';
 import { config } from 'dotenv';
 
 config();

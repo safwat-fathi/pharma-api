@@ -7,7 +7,7 @@ export class Customer extends Document {
   whatsappNumber: string;
 
   @Prop()
-  name: string;
+  name?: string;
 
   @Prop()
   address?: string;

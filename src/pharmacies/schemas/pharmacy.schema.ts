@@ -16,10 +16,10 @@ export class Pharmacy extends Document {
   location: { type: string; coordinates: [number, number] };
 
   @Prop()
-  serviceRadiusKm: number;
+  serviceRadiusKm?: number;
 
   @Prop()
-  hours: string;
+  hours?: string;
 }
 
 export const PharmacySchema = SchemaFactory.createForClass(Pharmacy);

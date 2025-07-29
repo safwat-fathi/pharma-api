@@ -1,93 +1,60 @@
 import {
   Controller,
   Post,
-
   Body,
-
   Res,
   HttpStatus,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { Response } from 'express';
-
-import { MetaService } from 'src/meta/meta.service';
 import { WhatsappService } from './whatsapp.service';
-import { MessagePayload, MessageType } from 'src/common/interfaces/message.interface';
+import { MessagePayload } from 'src/common/interfaces/message.interface';
 
 @Controller('webhooks/whatsapp')
 export class WhatsappController {
-  constructor(private metaService: MetaService, private whatsappService: WhatsappService) {}
+  private readonly verifyToken = process.env.META_WEBHOOK_VERIFY_TOKEN;
 
-  // ... (Your GET method for verification remains the same) ...
+  constructor(private readonly whatsappService: WhatsappService) {}
+
+  @Get()
+  verifyWebhook(
+    @Query('hub.mode') mode: string,
+    @Query('hub.challenge') challenge: string,
+    @Query('hub.verify_token') token: string,
+    @Res() res: Response,
+  ) {
+    if (mode === 'subscribe' && token === this.verifyToken) {
+      console.log('Webhook verified successfully!');
+      res.status(HttpStatus.OK).send(challenge);
+    } else {
+      console.error(
+        'Failed webhook verification. Make sure the verify tokens match.',
+      );
+      res.sendStatus(HttpStatus.FORBIDDEN);
+    }
+  }
 
   @Post()
-  async handleIncomingMessage(@Body() payload: MessagePayload, @Res() res: Response) {
-    // Acknowledge the request immediately
+  async handleIncomingMessage(
+    @Body() payload: MessagePayload,
+    @Res() res: Response,
+  ) {
+    // 1. Acknowledge the request immediately to prevent Meta from resending.
     res.sendStatus(HttpStatus.OK);
 
     try {
-			// 1. Extract the message object from the payload
+      // 2. Extract the message object from the payload.
       const message = payload.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
-			if (message) {
-        console.log(
-          '🚀 ~ :30 ~ WhatsappController ~ handleIncomingMessage ~ message:',
-          message,
-        );
-        const from = message.from;
 
-        switch (message.type) {
-          case MessageType.LOCATION:
-            console.log(
-              `Received location from ${from}: "${message.location}"`,
-            );
-            await this.whatsappService.routeMessage(
-              from,
-              undefined,
-              undefined,
-              message.location,
-            );
-
-            break;
-          case MessageType.IMAGE:
-            console.log(`Received image from ${from}: "${message.image}"`);
-            await this.whatsappService.routeMessage(
-              from,
-              undefined,
-              message.image.id,
-              undefined,
-            );
-
-            break;
-          case MessageType.DOCUMENT:
-            console.log(
-              `Received document from ${from}: "${message.document}"`,
-            );
-
-            await this.whatsappService.routeMessage(
-              from,
-              undefined,
-              message.document.id,
-              undefined,
-            );
-
-            break;
-          case MessageType.TEXT:
-            const body = message.text.body;
-            console.log(`Received message from ${from}: "${body}"`);
-
-            const replyText = `You said: "${body}". We got your message!`;
-            await this.metaService.sendMessage('+201143341684', replyText);
-
-            await this.whatsappService.routeMessage(from, body);
-
-            break;
-          default:
-            console.log(`Received unknown message type: "${message}"`);
-
-            break;
-        }
-      }      
+      // 3. If a message exists, pass it to the service for processing.
+      //    If it's a status update or other event, we simply ignore it.
+      if (message) {
+        await this.whatsappService.handleIncomingMessage(message);
+      }
     } catch (error) {
-      console.error('Error processing incoming message:', error);
+      // Log any errors that occur during the initial handoff.
+      console.error('Error in webhook controller:', error);
     }
   }
 }

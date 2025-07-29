@@ -1,17 +1,17 @@
 export enum MessageType {
-	TEXT = 'text',
-	IMAGE = 'image',
-	LOCATION = 'location',
-	DOCUMENT = 'document'
+  TEXT = 'text',
+  IMAGE = 'image',
+  LOCATION = 'location',
+  DOCUMENT = 'document',
 }
 
 export type DocumentMessage = {
-	type: MessageType.DOCUMENT;
-	document: {
-		mime_type: string;
-		sha256: string;
-		id: string;
-	};
+  type: MessageType.DOCUMENT;
+  document: {
+    mime_type: string;
+    sha256: string;
+    id: string;
+  };
 };
 
 export type LocationMessage = {
@@ -25,35 +25,36 @@ export type LocationMessage = {
 };
 
 export type ImageMessage = {
-	type: MessageType.IMAGE;
-	image: {
-		mime_type: string;
-		sha256: string;
-		id: string;
-	};
+  type: MessageType.IMAGE;
+  image: {
+    mime_type: string;
+    sha256: string;
+    id: string;
+  };
 };
 
 export type TextMessage = {
-	type: MessageType.TEXT;
-	text: {
-		body: string;
-	};
+  type: MessageType.TEXT;
+  text: {
+    body: string;
+  };
 };
 
 export type Base = {
   from: string;
-	id: string;
-	timestamp: string;
+  id: string;
+  timestamp: string;
 };
 
-export type Message = Base & (TextMessage | ImageMessage | LocationMessage | DocumentMessage);
+export type Message = Base &
+  (TextMessage | ImageMessage | LocationMessage | DocumentMessage);
 
 export type MessagePayload = {
-	entry: {
-		changes: {
-			value: {
-				messages: Message[];
-			};
-		}[];
-	}[];
+  entry: {
+    changes: {
+      value: {
+        messages: Message[];
+      };
+    }[];
+  }[];
 };
